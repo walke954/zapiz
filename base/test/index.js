@@ -1,0 +1,2 @@
+require('./Heap');
+require('./QuadTree');

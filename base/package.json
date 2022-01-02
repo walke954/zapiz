@@ -1,0 +1,11 @@
+{
+  "name": "zapiz-base",
+  "version": "1.0.0",
+  "description": "basic data structures",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Jonathan Walker",
+  "license": "ISC"
+}
