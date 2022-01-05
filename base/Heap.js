@@ -11,7 +11,7 @@ class Heap {
 		this._items = [];
 	}
 
-	peak() {
+	peek() {
 		const v = this._items[0];
 		return v === undefined ? null : v;
 	}

@@ -1,4 +1,6 @@
-function validate(obj) {
+const { intersects, contains } = require('./intersects');
+
+function validateParams(obj) {
 	return typeof obj === 'object'
 		&& typeof obj.x === 'number'
 		&& typeof obj.y === 'number'
@@ -8,29 +10,17 @@ function validate(obj) {
 		&& obj.h >= 0;
 }
 
-function intersects(tree, obj) {
-	if (tree._x + tree._w <= obj.x || obj.x + obj.w <= tree._x) {
-		return false;
-	}
-
-	if (tree._y + tree._h <= obj.y || obj.y + obj.h <= tree._y) {
-		return false;
-	}
-
-	return true;
-}
-
 class SpatialTree {
 	constructor(x, y, w, h, bucket = 4, depth = 6) {
-		const valid = validate({ x, y, w, h });
+		const valid = validateParams({ x, y, w, h });
 		if (!valid) {
 			throw new Error('invalid parameters');
 		}
 
 		this._x = x;
 		this._y = y;
-		this._w = w < 0 ? 0 : w;
-		this._h = h < 0 ? 0 : h;
+		this._w = w;
+		this._h = h;
 		this._bucket = bucket;
 		this._depth = depth;
 
@@ -39,9 +29,8 @@ class SpatialTree {
 	}
 
 	insert(obj) {
-		const valid = validate(obj);
 		const overlap = intersects(this, obj);
-		if (!valid || !overlap) {
+		if (!overlap) {
 			return false;
 		}
 
@@ -74,7 +63,7 @@ class SpatialTree {
 		} else {
 			Object.values(this._nodes).forEach((node) => {
 				node.remove(obj);
-			})
+			});
 		}
 
 		return true;
@@ -83,8 +72,10 @@ class SpatialTree {
 	update(obj, newVal) {
 		let updated = false;
 
+		const insert = newVal || obj;
+
 		const has = this._items.has(obj);
-		const overlap = intersects(this, newVal || obj);
+		const overlap = intersects(this, insert);
 		if (overlap) {
 			if (has) {
 				if (newVal) {
@@ -99,7 +90,7 @@ class SpatialTree {
 					});
 				}
 			} else {
-				updated = this.insert(newVal || obj);
+				updated = this.insert(insert);
 			}
 		} else if (has) {
 			updated = this.remove(obj);
@@ -111,6 +102,39 @@ class SpatialTree {
 	clear() {
 		this._items.clear();
 		this._nodes = null;
+	}
+
+	search(obj) {
+		const results = new Set();
+
+		const overlap = intersects(this, obj);
+		if (!overlap) {
+			return results;
+		}
+
+		const contained = contains(obj, this);
+		if (contained) {
+			this._items.forEach(it => results.add(it));
+			return results;
+		}
+
+		if (this._nodes !== null) {
+			Object.values(this._nodes).forEach((node) => {
+				const rs = node.search(obj);
+				rs.forEach(it => results.add(it));
+			});
+		} else {
+			this._items.forEach((it) => {
+				const ol = intersects(it, obj);
+				if (ol) results.add(it);
+			});
+		}
+
+		return results;
+	}
+
+	static isTree(t) {
+		return t instanceof SpatialTree;
 	}
 
 	_expand() {
@@ -175,6 +199,22 @@ class SpatialTree {
 		});
 
 		return true;
+	}
+
+	get x() {
+		return this._x;
+	}
+
+	get y() {
+		return this._y;
+	}
+
+	get w() {
+		return this._w;
+	}
+
+	get h() {
+		return this._h;
 	}
 
 	get size() {

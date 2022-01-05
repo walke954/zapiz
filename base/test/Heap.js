@@ -53,18 +53,18 @@ describe('heap', () => {
 		);
 	});
 
-	it('peak - should see proper value', () => {
-		assert.strictEqual(heap0.peak(), 0);
-		assert.strictEqual(heap1.peak(), 7);
-		assert.strictEqual(heap2.peak(), 0);
-		assert.strictEqual(heap3.peak(), 7);
+	it('peek - should see proper value', () => {
+		assert.strictEqual(heap0.peek(), 0);
+		assert.strictEqual(heap1.peek(), 7);
+		assert.strictEqual(heap2.peek(), 0);
+		assert.strictEqual(heap3.peek(), 7);
 	});
 
-	it('peak - length should not change', () => {
-		heap0.peak();
-		heap1.peak();
-		heap2.peak();
-		heap3.peak();
+	it('peek - length should not change', () => {
+		heap0.peek();
+		heap1.peek();
+		heap2.peek();
+		heap3.peek();
 
 		assert.strictEqual(heap0.size, 12);
 		assert.strictEqual(heap1.size, 12);

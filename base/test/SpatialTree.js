@@ -1,5 +1,6 @@
 const assert = require('assert');
 
+const { intersects } = require('../intersects');
 const SpatialTree = require('../SpatialTree');
 
 let stree0; // square
@@ -29,22 +30,8 @@ const rectangles = [rect0, rect1, rect2, rect3, rect4, rect5, rect6, rect7, rect
 
 const squareNodes = ['nw', 'ne', 'sw', 'se'];
 
-function intersects(tree, obj) {
-	if (tree._x + tree._w <= obj.x || obj.x + obj.w <= tree._x) {
-		return false;
-	}
-
-	if (tree._y + tree._h <= obj.y || obj.y + obj.h <= tree._y) {
-		return false;
-	}
-
-	return true;
-}
-
-const isTree = t => t instanceof SpatialTree;
-
 function validate(tree) {
-	if (!isTree(tree)) {
+	if (!SpatialTree.isTree(tree)) {
 		return false;
 	}
 
@@ -76,20 +63,20 @@ function validate(tree) {
 			}
 
 			// validate divisions
-			const ratio = node._w / node._h;
+			const ratio = node.w / node.h;
 			if (ratio >= 1.5) {
-				if (!isTree(node._nodes.w) || !isTree(node._nodes.e)) {
+				if (!SpatialTree.isTree(node._nodes.w) || !SpatialTree.isTree(node._nodes.e)) {
 					return false;
 				}
 			} else if (ratio <= 0.75) {
-				if (!isTree(node._nodes.n) || !isTree(node._nodes.s)) {
+				if (!SpatialTree.isTree(node._nodes.n) || !SpatialTree.isTree(node._nodes.s)) {
 					return false;
 				}
 			} else {
-				const v = isTree(node._nodes.nw)
-					&& isTree(node._nodes.ne)
-					&& isTree(node._nodes.sw)
-					&& isTree(node._nodes.se)
+				const v = SpatialTree.isTree(node._nodes.nw)
+					&& SpatialTree.isTree(node._nodes.ne)
+					&& SpatialTree.isTree(node._nodes.sw)
+					&& SpatialTree.isTree(node._nodes.se)
 				if (!v) {
 					return false;
 				}
@@ -188,7 +175,8 @@ describe('spatial tree', () => {
 
 	it('search - should return items that intersect bounds', () => {
 		trees.forEach((t) => {
-			const items = t.search();
+			const items = t.search({ x: 5, y: 3, w: 10, h: 8 });
+			// console.log(items);
 			// assert.strictEqual(t._nodes, null);
 		});
 	});
