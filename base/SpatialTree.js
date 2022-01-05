@@ -104,6 +104,7 @@ class SpatialTree {
 		this._nodes = null;
 	}
 
+	// intersect search
 	search(obj) {
 		const results = new Set();
 
@@ -126,6 +127,36 @@ class SpatialTree {
 		} else {
 			this._items.forEach((it) => {
 				const ol = intersects(it, obj);
+				if (ol) results.add(it);
+			});
+		}
+
+		return results;
+	}
+
+	// contain search
+	search2(obj) {
+		const results = new Set();
+
+		const overlap = intersects(this, obj);
+		if (!overlap) {
+			return results;
+		}
+
+		const contained = contains(obj, this);
+		if (contained) {
+			this._items.forEach(it => results.add(it));
+			return results;
+		}
+
+		if (this._nodes !== null) {
+			Object.values(this._nodes).forEach((node) => {
+				const rs = node.search2(obj);
+				rs.forEach(it => results.add(it));
+			});
+		} else {
+			this._items.forEach((it) => {
+				const ol = contains(it, obj);
 				if (ol) results.add(it);
 			});
 		}
