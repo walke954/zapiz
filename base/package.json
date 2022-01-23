@@ -1,6 +1,6 @@
 {
   "name": "zapiz-base",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "basic data structures and functions",
   "main": "index.js",
   "scripts": {
