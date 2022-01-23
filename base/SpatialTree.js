@@ -1,4 +1,4 @@
-const { intersects, contains } = require('./intersects');
+const Intersect = require('./Intersect');
 
 function validateParams(obj) {
 	return typeof obj === 'object'
@@ -29,7 +29,7 @@ class SpatialTree {
 	}
 
 	insert(obj) {
-		const overlap = intersects(this, obj);
+		const overlap = Intersect.intersects(this, obj);
 		if (!overlap) {
 			return false;
 		}
@@ -75,7 +75,7 @@ class SpatialTree {
 		const insert = newVal || obj;
 
 		const has = this._items.has(obj);
-		const overlap = intersects(this, insert);
+		const overlap = Intersect.intersects(this, insert);
 		if (overlap) {
 			if (has) {
 				if (newVal) {
@@ -108,12 +108,12 @@ class SpatialTree {
 	search(obj) {
 		const results = new Set();
 
-		const overlap = intersects(this, obj);
+		const overlap = Intersect.intersects(this, obj);
 		if (!overlap) {
 			return results;
 		}
 
-		const contained = contains(obj, this);
+		const contained = Intersect.contains(obj, this);
 		if (contained) {
 			this._items.forEach(it => results.add(it));
 			return results;
@@ -138,12 +138,12 @@ class SpatialTree {
 	search2(obj) {
 		const results = new Set();
 
-		const overlap = intersects(this, obj);
+		const overlap = Intersect.intersects(this, obj);
 		if (!overlap) {
 			return results;
 		}
 
-		const contained = contains(obj, this);
+		const contained = Intersect.contains(obj, this);
 		if (contained) {
 			this._items.forEach(it => results.add(it));
 			return results;
@@ -156,7 +156,7 @@ class SpatialTree {
 			});
 		} else {
 			this._items.forEach((it) => {
-				const ol = contains(it, obj);
+				const ol = Intersect.contains(it, obj);
 				if (ol) results.add(it);
 			});
 		}

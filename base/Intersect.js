@@ -72,55 +72,6 @@ function circleRectIntersect(cl, rt) {
 	return true;
 }
 
-function intersects(obj0, obj1) {
-	const type0 = itemType(obj0);
-	const type1 = itemType(obj1);
-
-	if (type0 === 'point') {
-		if (type1 === 'point') {
-			return pointPointIntersect(obj0, obj1);
-		}
-
-		if (type1 === 'circle') {
-			return pointCircleIntersect(obj0, obj1);
-		}
-
-		if (type1 === 'rectangle') {
-			return pointRectIntersect(obj0, obj1);
-		}
-	}
-
-	if (type0 === 'circle') {
-		if (type1 === 'point') {
-			return pointCircleIntersect(obj1, obj0);
-		}
-
-		if (type1 === 'circle') {
-			return circleCircleIntersect(obj0, obj1);
-		}
-
-		if (type1 === 'rectangle') {
-			return circleRectIntersect(obj0, obj1);
-		}
-	}
-
-	if (type0 === 'rectangle') {
-		if (type1 === 'point') {
-			return pointRectIntersect(obj1, obj0);
-		}
-
-		if (type1 === 'circle') {
-			return circleRectIntersect(obj1, obj0);
-		}
-
-		if (type1 === 'rectangle') {
-			return rectRectIntersect(obj0, obj1);
-		}
-	}
-
-	return false;
-}
-
 function rectRectContain(rt0, rt1) {
 	return rt0.x <= rt1.x
 		&& rt0.y <= rt1.y
@@ -160,44 +111,95 @@ function rectCircleContain(rt, cl) {
 	return true;
 }
 
-// obj0 contains obj1
-function contains(obj0, obj1) {
-	const type0 = itemType(obj0);
-	const type1 = itemType(obj1);
+class Intersect {
+	static intersects(obj0, obj1) {
+		const type0 = itemType(obj0);
+		const type1 = itemType(obj1);
 
-	if (type0 === 'point' && type1 === 'point') {
-		return pointPointIntersect(obj0, obj1);
+		if (type0 === 'point') {
+			if (type1 === 'point') {
+				return pointPointIntersect(obj0, obj1);
+			}
+
+			if (type1 === 'circle') {
+				return pointCircleIntersect(obj0, obj1);
+			}
+
+			if (type1 === 'rectangle') {
+				return pointRectIntersect(obj0, obj1);
+			}
+		}
+
+		if (type0 === 'circle') {
+			if (type1 === 'point') {
+				return pointCircleIntersect(obj1, obj0);
+			}
+
+			if (type1 === 'circle') {
+				return circleCircleIntersect(obj0, obj1);
+			}
+
+			if (type1 === 'rectangle') {
+				return circleRectIntersect(obj0, obj1);
+			}
+		}
+
+		if (type0 === 'rectangle') {
+			if (type1 === 'point') {
+				return pointRectIntersect(obj1, obj0);
+			}
+
+			if (type1 === 'circle') {
+				return circleRectIntersect(obj1, obj0);
+			}
+
+			if (type1 === 'rectangle') {
+				return rectRectIntersect(obj0, obj1);
+			}
+		}
+
+		return false;
 	}
 
-	if (type0 === 'circle') {
-		if (type1 === 'point') {
-			return pointCircleIntersect(obj1, obj0);
+	// obj0 contains obj1
+	static contains(obj0, obj1) {
+		const type0 = itemType(obj0);
+		const type1 = itemType(obj1);
+
+		if (type0 === 'point' && type1 === 'point') {
+			return pointPointIntersect(obj0, obj1);
 		}
 
-		if (type1 === 'circle') {
-			return circleCircleContain(obj0, obj1);
+		if (type0 === 'circle') {
+			if (type1 === 'point') {
+				return pointCircleIntersect(obj1, obj0);
+			}
+
+			if (type1 === 'circle') {
+				return circleCircleContain(obj0, obj1);
+			}
+
+			if (type1 === 'rectangle') {
+				return circleRectContain(obj0, obj1);
+			}
 		}
 
-		if (type1 === 'rectangle') {
-			return circleRectContain(obj0, obj1);
+		if (type0 === 'rectangle') {
+			if (type1 === 'point') {
+				return pointRectIntersect(obj1, obj0);
+			}
+
+			if (type1 === 'circle') {
+				return rectCircleContain(obj1, obj0);
+			}
+
+			if (type1 === 'rectangle') {
+				return rectRectContain(obj0, obj1);
+			}
 		}
+
+		return false;
 	}
-
-	if (type0 === 'rectangle') {
-		if (type1 === 'point') {
-			return pointRectIntersect(obj1, obj0);
-		}
-
-		if (type1 === 'circle') {
-			return rectCircleContain(obj1, obj0);
-		}
-
-		if (type1 === 'rectangle') {
-			return rectRectContain(obj0, obj1);
-		}
-	}
-
-	return false;
 }
 
-module.exports = { intersects, contains };
+module.exports = Intersect;

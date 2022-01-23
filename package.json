@@ -1,7 +1,7 @@
 {
   "name": "zapiz",
-  "version": "0.0.0",
-  "description": "data structures",
+  "version": "0.0.1",
+  "description": "various data structures/algorithms",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
